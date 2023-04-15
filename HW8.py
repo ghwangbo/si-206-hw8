@@ -48,7 +48,6 @@ def plot_rest_categories(db):
         else:
             cat_counts[category] = 1
 
-    # Create a bar chart of the restaurant categories and their counts
     plt.bar(cat_counts.keys(), cat_counts.values())
     plt.title('Number of Restaurants by Category')
     plt.xlabel('Category')
@@ -69,10 +68,8 @@ def find_rest_in_building(building_num, db):
     conn = sqlite3.connect(db)
     c = conn.cursor()
 
-    # Execute a SQL query to retrieve the necessary data
     c.execute('SELECT name FROM restaurants WHERE building=? ORDER BY rating DESC', (building_num,))
 
-    # Retrieve the data and close the database connection
     restaurant_names = [row[0] for row in c.fetchall()]
     
     conn.close()
