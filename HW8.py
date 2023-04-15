@@ -22,6 +22,7 @@ def load_rest_data(db):
     c.execute('SELECT name, category_id, building_id, rating FROM restaurants Join categories ON restaurants.category_id == categories.id')
 
     rest_dict = {}
+    
     for row in c.fetchall():
         name = row[0]
         category = row[len(row) - 1]
