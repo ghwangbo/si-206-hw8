@@ -1,5 +1,5 @@
-# Your name: 
-# Your student id:
+# Your name: Geon Hwangbo
+# Your student id: 17776111
 # Your email:
 # List who you have worked with on this homework:
 
@@ -15,7 +15,21 @@ def load_rest_data(db):
     and each inner key is a dictionary, where the key:value pairs should be the category, 
     building, and rating for the restaurant.
     """
-    pass
+
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+
+    c.execute('SELECT name, category, building, rating FROM restaurants')
+
+    rest_dict = {}
+    for row in c.fetchall():
+        name, category, building, rating = row
+        rest_dict[name] = {'category': category, 'building': building, 'rating': rating}
+
+    # Close the database connection
+    conn.close()
+
+    return rest_dict
 
 def plot_rest_categories(db):
     """
@@ -23,7 +37,27 @@ def plot_rest_categories(db):
     restaurant categories and the values should be the number of restaurants in each category. The function should
     also create a bar chart with restaurant categories and the count of number of restaurants in each category.
     """
-    pass
+    rest_data = load_rest_data(db)
+
+    # Count the number of restaurants in each category
+    cat_counts = {}
+    for name, data in rest_data.items():
+        category = data['category']
+        if category in cat_counts:
+            cat_counts[category] += 1
+        else:
+            cat_counts[category] = 1
+
+    # Create a bar chart of the restaurant categories and their counts
+    plt.bar(cat_counts.keys(), cat_counts.values())
+    plt.title('Number of Restaurants by Category')
+    plt.xlabel('Category')
+    plt.ylabel('Number of Restaurants')
+    plt.xticks(rotation=90)
+    plt.show()
+
+    return cat_counts
+ 
 
 def find_rest_in_building(building_num, db):
     '''
@@ -31,7 +65,19 @@ def find_rest_in_building(building_num, db):
     restaurant names. You need to find all the restaurant names which are in the specific building. The restaurants 
     should be sorted by their rating from highest to lowest.
     '''
-    pass
+    
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+
+    # Execute a SQL query to retrieve the necessary data
+    c.execute('SELECT name FROM restaurants WHERE building=? ORDER BY rating DESC', (building_num,))
+
+    # Retrieve the data and close the database connection
+    restaurant_names = [row[0] for row in c.fetchall()]
+    
+    conn.close()
+
+    return restaurant_names
 
 #EXTRA CREDIT
 def get_highest_rating(db): #Do this through DB as well
