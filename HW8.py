@@ -19,11 +19,14 @@ def load_rest_data(db):
     conn = sqlite3.connect(db)
     c = conn.cursor()
 
-    c.execute('SELECT name, category, building, rating FROM restaurants')
+    c.execute('SELECT name, category_id, building_id, rating FROM restaurants Join categories ON restaurants.category_id == categories.id')
 
     rest_dict = {}
     for row in c.fetchall():
-        name, category, building, rating = row
+        name = row[0]
+        category = row[len(row) - 1]
+        building = row[2]
+        rating = row[3]
         rest_dict[name] = {'category': category, 'building': building, 'rating': rating}
 
     # Close the database connection
@@ -42,7 +45,7 @@ def plot_rest_categories(db):
     # Count the number of restaurants in each category
     cat_counts = {}
     for name, data in rest_data.items():
-        category = data['category']
+        category = data['category_id']
         if category in cat_counts:
             cat_counts[category] += 1
         else:
@@ -68,7 +71,7 @@ def find_rest_in_building(building_num, db):
     conn = sqlite3.connect(db)
     c = conn.cursor()
 
-    c.execute('SELECT name FROM restaurants WHERE building=? ORDER BY rating DESC', (building_num,))
+    c.execute('SELECT name FROM restaurants WHERE building_id =? ORDER BY rating DESC', (building_num,))
 
     restaurant_names = [row[0] for row in c.fetchall()]
     
